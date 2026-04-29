@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Defense Command Center</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ============================================================
+       STARTUP / BOOT SCREEN
+       Shown first, fades out automatically after boot sequence
+  ============================================================ -->
+  <div id="bootScreen">
+    <div class="boot-inner">
+      <div class="boot-logo">
+        <span class="boot-emblem">⬡</span>
+        <span class="boot-title">DEFENSE COMMAND CENTER</span>
+        <span class="boot-sub">CLASSIFIED // EYES ONLY</span>
+      </div>
+      <div class="boot-log" id="bootLog"></div>
+      <div class="boot-bar-wrap">
+        <div class="boot-bar" id="bootBar"></div>
+      </div>
+      <div class="boot-pct" id="bootPct">0%</div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       MAIN DASHBOARD  (hidden until boot completes)
+  ============================================================ -->
+  <div id="dashboard" class="hidden">
+
+    <!-- ── TOP NAVIGATION BAR ─────────────────────────────── -->
+    <nav class="topbar">
+      <div class="topbar-left">
+        <span class="nav-emblem">⬡</span>
+        <span class="nav-title">DEFENSE COMMAND CENTER</span>
+        <span class="nav-badge">ACTIVE</span>
+      </div>
+      <div class="topbar-center">
+        <span class="nav-label">CLEARANCE:</span>
+        <span class="nav-value red">ALPHA–1</span>
+        &nbsp;|&nbsp;
+        <span class="nav-label">SECTOR:</span>
+        <span class="nav-value green">BRAVO-9</span>
+        &nbsp;|&nbsp;
+        <span class="nav-label">UNIT:</span>
+        <span class="nav-value yellow">7TH BRIGADE</span>
+      </div>
+      <div class="topbar-right">
+        <div class="live-clock" id="liveClock">00:00:00</div>
+        <div class="live-date" id="liveDate">--/--/----</div>
+      </div>
+    </nav>
+
+    <!-- ── MAIN GRID ──────────────────────────────────────── -->
+    <main class="grid">
+
+      <!-- ═══ COLUMN 1 ═══════════════════════════════════════ -->
+
+      <!-- Radar Panel -->
+      <section class="card card-radar" id="radarPanel">
+        <div class="card-header">
+          <span class="card-icon">📡</span>
+          <span class="card-title">RADAR SYSTEM</span>
+          <span class="card-status blink green-text" id="radarStatus">SCANNING</span>
+        </div>
+        <div class="radar-wrap">
+          <div class="radar-container">
+            <!-- Concentric rings -->
+            <div class="radar-ring ring-1"></div>
+            <div class="radar-ring ring-2"></div>
+            <div class="radar-ring ring-3"></div>
+            <div class="radar-ring ring-4"></div>
+            <!-- Cross hairs -->
+            <div class="radar-cross radar-h"></div>
+            <div class="radar-cross radar-v"></div>
+            <!-- Sweep beam -->
+            <div class="radar-sweep"></div>
+            <!-- Targets (blinking dots) -->
+            <div class="radar-dot" style="top:28%;left:62%;" id="dot1"></div>
+            <div class="radar-dot" style="top:55%;left:35%;" id="dot2"></div>
+            <div class="radar-dot yellow-dot" style="top:38%;left:48%;" id="dot3"></div>
+            <div class="radar-dot red-dot" style="top:68%;left:58%;" id="dot4"></div>
+            <!-- Center -->
+            <div class="radar-center"></div>
+          </div>
+        </div>
+        <div class="radar-legend">
+          <span class="legend-item"><span class="legend-dot green-dot"></span>FRIENDLY</span>
+          <span class="legend-item"><span class="legend-dot yellow-dot-sm"></span>UNKNOWN</span>
+          <span class="legend-item"><span class="legend-dot red-dot-sm"></span>HOSTILE</span>
+        </div>
+      </section>
+
+      <!-- Threat Level Panel -->
+      <section class="card" id="threatPanel">
+        <div class="card-header">
+          <span class="card-icon">🚨</span>
+          <span class="card-title">THREAT ASSESSMENT</span>
+        </div>
+
+        <div class="threat-display" id="threatDisplay">
+          <div class="threat-level-label">THREAT LEVEL</div>
+          <div class="threat-level-value" id="threatValue">STANDBY</div>
+          <div class="threat-bar-wrap">
+            <div class="threat-bar" id="threatBar"></div>
+          </div>
+          <div class="threat-desc" id="threatDesc">Awaiting area scan...</div>
+        </div>
+
+        <button class="cmd-btn" id="scanBtn" onclick="scanArea()">
+          <span class="btn-icon">⚡</span> SCAN AREA
+        </button>
+
+        <div class="threat-log" id="threatLog">
+          <div class="log-title">SCAN HISTORY</div>
+          <div id="threatLogList"></div>
+        </div>
+      </section>
+
+      <!-- ═══ COLUMN 2 ═══════════════════════════════════════ -->
+
+      <!-- Target Tracking Panel -->
+      <section class="card" id="targetPanel">
+        <div class="card-header">
+          <span class="card-icon">📍</span>
+          <span class="card-title">TARGET TRACKING</span>
+          <span class="card-status" id="targetStatus">IDLE</span>
+        </div>
+
+        <div class="target-display" id="targetDisplay">
+          <div class="target-crosshair" id="targetCrosshair">
+            <div class="cross-h"></div>
+            <div class="cross-v"></div>
+            <div class="cross-circle outer"></div>
+            <div class="cross-circle inner"></div>
+            <div class="cross-center"></div>
+          </div>
+          <div class="target-info" id="targetInfo">
+            <div class="tinfo-row">
+              <span class="tinfo-label">STATUS</span>
+              <span class="tinfo-value" id="tStatus">NO TARGET</span>
+            </div>
+            <div class="tinfo-row">
+              <span class="tinfo-label">LATITUDE</span>
+              <span class="tinfo-value mono" id="tLat">---.---- °N</span>
+            </div>
+            <div class="tinfo-row">
+              <span class="tinfo-label">LONGITUDE</span>
+              <span class="tinfo-value mono" id="tLon">---.---- °E</span>
+            </div>
+            <div class="tinfo-row">
+              <span class="tinfo-label">ALTITUDE</span>
+              <span class="tinfo-value mono" id="tAlt">---- m</span>
+            </div>
+            <div class="tinfo-row">
+              <span class="tinfo-label">SPEED</span>
+              <span class="tinfo-value mono" id="tSpeed">--- km/h</span>
+            </div>
+            <div class="tinfo-row">
+              <span class="tinfo-label">DESIGNATION</span>
+              <span class="tinfo-value yellow-text mono" id="tDesig">----</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="cmd-btn" id="trackBtn" onclick="trackTarget()">
+          <span class="btn-icon">🎯</span> TRACK TARGET
+        </button>
+        <button class="cmd-btn secondary-btn" id="clearBtn" onclick="clearTarget()">
+          <span class="btn-icon">✕</span> CLEAR TARGET
+        </button>
+      </section>
+
+      <!-- System Status Panel -->
+      <section class="card" id="statusPanel">
+        <div class="card-header">
+          <span class="card-icon">📊</span>
+          <span class="card-title">SYSTEM STATUS</span>
+        </div>
+
+        <div class="sys-grid" id="sysGrid">
+          <!-- Each row = one subsystem — built by JS -->
+        </div>
+
+        <button class="cmd-btn" onclick="refreshSystems()">
+          <span class="btn-icon">↺</span> REFRESH SYSTEMS
+        </button>
+      </section>
+
+      <!-- ═══ COLUMN 3 — FULL HEIGHT ════════════════════════ -->
+
+      <!-- Mission Log -->
+      <section class="card card-tall" id="logPanel">
+        <div class="card-header">
+          <span class="card-icon">📋</span>
+          <span class="card-title">MISSION LOG</span>
+          <button class="clear-log-btn" onclick="clearLog()">CLR</button>
+        </div>
+        <div class="mission-log" id="missionLog"></div>
+      </section>
+
+    </main><!-- /grid -->
+
+    <!-- ── BOTTOM STATUS BAR ────────────────────────────── -->
+    <footer class="statusbar">
+      <span>ENCRYPTION: AES-256</span>
+      <span id="sbTime"></span>
+      <span>NETWORK: <span class="green-text">SECURE</span></span>
+      <span>SATELLITES: <span class="green-text">3 LINKED</span></span>
+      <span>UPTIME: <span id="uptimeDisplay">00:00:00</span></span>
+      <span class="blink red-text">● CLASSIFIED</span>
+    </footer>
+
+  </div><!-- /dashboard -->
+
+  <script src="script.js"></script>
+</body>
+</html>
